@@ -13,8 +13,7 @@ const randomImage = () => {
     fetch("https://dog.ceo/api/breeds/image/random")
     .then(response => response.json())
     .then(randomLink => {
-        console.log(image.src)
-        image.src=randomLink.message;
+       image.src=randomLink.message;
     }).catch(() =>{
         alert("Error!!")
     })
@@ -26,15 +25,34 @@ const toggleImage = (toggleButton) => {
      })
 }
 
-function addComment(){
+function addComment(user){
     commentForm.addEventListener("submit",(e) => {
         e.preventDefault();
         let theComment=e.target.comment.value;
+        const configurationObject ={   
+        Method: "POST",
+        Headers: {
+            "Content-Type" : "application/json"
+        },
+        Body : JSON.stringify({
+            imageId : user.id,
+            content : theComment
+        }),
+    }
+        fetch("http://localhost:3000/comments",configurationObject)
+        .then(response => response.json())
+        .then((data => {
+            console.log(data.content)
+        }))
+        .catch (() => {
+            alert("Error!!")
+        })
+
+        
         const li =document.createElement("li");
         li.innerText=theComment;
         commentList.appendChild(li);
 
-        console.log(commentList)
     })
 }
 
@@ -63,8 +81,7 @@ function addContent(user){
         li.innerText=comment.content
         commentList.appendChild(li);
     }
-
-    addComment();
+ 
     
 }
 
@@ -75,7 +92,10 @@ document.addEventListener("DOMContentLoaded", (e) => {
     .then(object => {
 
         addContent(object);
+        addComment(object);
         toggleImage(title);
+       
+     
 
         
        
